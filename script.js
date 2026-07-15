@@ -209,28 +209,32 @@ const YEAR = 2026, MONTH = 6;
   <meta charset="UTF-8">
   <title>${title}</title>
   <style>
-    body { font-family: Inter, Arial, sans-serif; margin: 0; padding: 28px; color: #141E2E; background: #FAF7F0; }
-    .wrap { max-width: 1100px; margin: 0 auto; }
-    .masthead { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; }
+    @page { size: A4 landscape; margin: 12mm; }
+    body { font-family: Inter, Arial, sans-serif; margin: 0; padding: 0; color: #141E2E; background: #FAF7F0; }
+    .wrap { max-width: 100%; margin: 0 auto; }
+    .masthead { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #E4DDCB; }
     .brand-row { display: flex; align-items: center; gap: 12px; }
-    h1 { font-family: Fraunces, Georgia, serif; font-size: 28px; margin: 0; }
-    .eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: 11px; color: #9A7530; margin: 0 0 4px; }
-    .subline { color: #3C4A5E; font-size: 12px; margin: 8px 0 16px; }
+    .quill { width: 28px; height: 28px; }
+    h1 { font-family: Fraunces, Georgia, serif; font-size: 24px; margin: 0; color: #141E2E; }
+    .eyebrow { text-transform: uppercase; letter-spacing: .16em; font-size: 10px; color: #9A7530; margin: 0 0 4px; }
+    .stroke { width: 220px; height: 12px; margin-top: 6px; }
+    .subline { color: #3C4A5E; font-size: 11px; margin: 8px 0 12px; max-width: 760px; line-height: 1.4; }
     .weekdays, .grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 1px; }
-    .weekdays { margin-bottom: 4px; }
-    .weekdays span { font-size: 10px; text-transform: uppercase; font-weight: 700; color: #3C4A5E; padding: 4px 4px 6px; }
+    .weekdays { margin-bottom: 3px; }
+    .weekdays span { font-size: 9px; text-transform: uppercase; font-weight: 700; color: #3C4A5E; padding: 3px 4px 5px; }
     .grid { background: #E4DDCB; border: 1px solid #E4DDCB; }
-    .cell { background: #FAF7F0; min-height: 108px; padding: 8px; display: flex; flex-direction: column; border: 1px solid #E4DDCB; }
-    .daynum { font-family: Fraunces, Georgia, serif; font-size: 14px; font-weight: 600; color: #141E2E; }
-    .entry { background: #FFFFFF; border: 1px solid #E4DDCB; border-left: 3px solid #C49A5A; border-radius: 5px; padding: 6px; margin-top: 6px; font-size: 10px; line-height: 1.35; }
-    .entry .t { font-weight: 700; margin: 0 0 2px; color: #141E2E; }
+    .cell { background: #FAF7F0; min-height: 96px; padding: 7px; display: flex; flex-direction: column; border: 1px solid #E4DDCB; }
+    .daynum { font-family: Fraunces, Georgia, serif; font-size: 12px; font-weight: 600; color: #141E2E; }
+    .entry { background: #FFFFFF; border: 1px solid #E4DDCB; border-left: 3px solid #C49A5A; border-radius: 5px; padding: 5px; margin-top: 5px; font-size: 9px; line-height: 1.3; }
+    .entry .t { font-weight: 700; margin: 0 0 1px; color: #141E2E; }
     .entry .d { margin: 0; color: #3C4A5E; }
-    .entry img { width: 100%; height: 34px; object-fit: cover; border-radius: 3px; margin-top: 4px; }
+    .entry img { width: 100%; height: 30px; object-fit: cover; border-radius: 3px; margin-top: 4px; }
     .add { display: none; }
     .today { background: #FBF1DC; }
-    .counter { font-size: 12px; text-align: right; color: #3C4A5E; }
-    .counter b { display: block; font-size: 20px; color: #141E2E; }
-    .empty-hint { margin-top: 12px; color: #3C4A5E; font-size: 11px; }
+    .counter { font-size: 11px; text-align: right; color: #3C4A5E; }
+    .counter b { display: block; font-size: 18px; color: #141E2E; }
+    .empty-hint { margin-top: 10px; color: #3C4A5E; font-size: 10px; }
+    .entry-count, .entry-head, .entry-remove, .entry-index, .entry-tag { display: none !important; }
   </style>
 </head>
 <body>
