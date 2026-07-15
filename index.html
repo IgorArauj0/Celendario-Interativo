@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&amp;family=Inter:wght@400;500;600&amp;display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="wrap">
+
+        <div class="masthead">
+            <div>
+                <p class="eyebrow">Calendário editorial</p>
+                <div class="brand-row">
+                    <svg class="quill" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M8 44 C20 30, 34 22, 52 10 C46 22, 40 26, 46 24 C38 30, 28 32, 22 40 C18 44, 14 46, 8 44 Z"
+                            fill="#C49A5A"></path>
+                    </svg>
+                    <h1>Boletins de Julho</h1>
+                </div>
+                <svg class="stroke" viewBox="0 0 220 14" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M2 10 C 50 2, 100 14, 150 6 C 175 2, 195 8, 218 4" stroke="#C49A5A" stroke-width="2"
+                        fill="none" stroke-linecap="round"></path>
+                </svg>
+            </div>
+            <div class="counter" id="counter"><b>6</b>boletins programados</div>
+        </div>
+
+        <p class="subline">Clique em qualquer dia para programar o envio de um boletim aos Associados, Corretores e Funcionários,
+            descrição e, se quiser, a arte de divulgação.</p>
+
+        <div class="weekdays">
+            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+        </div>
+        <div class="grid" id="grid">
+            <div class="cell pad"></div>
+            <div class="cell pad"></div>
+            <div class="cell pad"></div>
+            <div class="cell">
+                <div class="daynum">1</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">2</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">3</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">4</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">5</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">6</div>
+                <div class="entry">
+                    <p class="t">Sesc|Férias de Julho</p>
+                    <p class="d">condição especial para os associados aproveitarem os hotéis por todo o Estado com todo
+                        o conforto</p><img src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_91_253F.gif"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">7</div>
+                <div class="entry">
+                    <p class="t">24º Congresso Brasileiro dos Corretores de Seguros</p>
+                    <p class="d">O Rio de Janeiro está pronto para ser o epicentro do mercado de seguros</p><img
+                        src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_90_0D13.gif"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">8</div>
+                <div class="entry">
+                    <p class="t">Prof° Sergio Ricardo | Gestão financeira</p>
+                    <p class="d">Gestão financeira também é estratégia de crescimento.</p><img
+                        src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_93_80AE.gif"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">9</div>
+                <div class="entry">
+                    <p class="t">Palestra Prof° Arley</p>
+                    <p class="d">Um bom plano de negócios faz toda a diferença no crescimento da sua corretora!</p><img
+                        src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_92_F0C0.gif"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">10</div>
+                <div class="entry">
+                    <p class="t">Impacto da Lei 15.040/2024 - SENRA</p>
+                    <p class="d">Impacto da Lei 15.040/2024 na atividade de Corretores de Seguros - SENRA</p><img
+                        src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_97_A661.gif"
+                        onerror="this.style.display='none'">
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">11</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">12</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">13</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">14</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell today">
+                <div class="daynum">15<span class="today-dot"></span></div>
+                <div class="entry">
+                    <p class="t">Palestra do Professor Arley</p>
+                    <p class="d">Boletim de convite e reforço de presença para os corretores associados.</p>
+                </div>
+            </div>
+            <div class="cell">
+                <div class="daynum">16</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">17</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">18</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">19</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">20</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">21</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">22</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">23</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">24</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">25</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">26</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">27</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">28</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">29</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">30</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell">
+                <div class="daynum">31</div>
+                <div class="add">+</div>
+            </div>
+            <div class="cell pad"></div>
+        </div>
+        <p class="empty-hint">Os boletins ficam salvos automaticamente na sua conta.</p>
+        <div class="pdf-actions">
+            <button class="pdf-btn" id="btnPdf">Gerar PDF do calendário</button>
+        </div>
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div class="modal">
+            <h3>Programar boletim</h3>
+            <p class="mdate" id="mdate">11 de julho de 2026</p>
+            <div class="field">
+                <label for="fTitle">Título do boletim</label>
+                <input id="fTitle" type="text" placeholder="Ex.: Palestra do Professor Arley">
+            </div>
+            <div class="field">
+                <label for="fDesc">Descrição</label>
+                <textarea id="fDesc" placeholder="O que será enviado e para quem"></textarea>
+            </div>
+            <div class="field">
+                <label for="fArt">URL da arte (opcional)</label>
+                <input id="fArt" type="text" placeholder="https://...">
+                <div class="preview"><img id="fArtPreview"
+                        src="https://sincorrj.tcsdigital.com.br/digital/public/BTPub_97_A661.gif"
+                        style="display: none;"></div>
+            </div>
+            <div class="mbtns">
+                <button class="del" id="btnDel" style="visibility: hidden;">Remover</button>
+                <div class="right">
+                    <button id="btnCancel">Cancelar</button>
+                    <button class="primary" id="btnSave">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>
