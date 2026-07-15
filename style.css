@@ -1,3 +1,4 @@
+/* Variáveis de tema para manter consistência visual */
 :root {
     --cream: #FAF7F0;
     --ink: #141E2E;
@@ -15,6 +16,7 @@
     box-sizing: border-box;
 }
 
+/* Base da página */
 body {
     margin: 0;
     background: var(--cream);
@@ -23,11 +25,13 @@ body {
     padding: 32px 24px 60px;
 }
 
+/* Container principal */
 .wrap {
     max-width: 1180px;
     margin: 0 auto;
 }
 
+/* Cabeçalho do calendário */
 .masthead {
     display: flex;
     align-items: flex-end;
@@ -95,6 +99,7 @@ h1 {
     line-height: 1.55;
 }
 
+/* Cabeçalhos dos dias da semana */
 .weekdays {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -111,6 +116,7 @@ h1 {
     padding: 0 4px 8px;
 }
 
+/* Grade do calendário */
 .grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -119,6 +125,7 @@ h1 {
     border: 1px solid var(--line);
 }
 
+/* Cada dia do calendário */
 .cell {
     background: var(--cream);
     min-height: 132px;
@@ -168,6 +175,7 @@ h1 {
     background: var(--gold-deep);
 }
 
+/* Lista de boletins dentro de uma célula */
 .entry-stack {
     display: flex;
     flex-direction: column;
@@ -298,6 +306,7 @@ h1 {
     border-color: var(--gold);
 }
 
+/* Área de ação para exportação em PDF */
 .pdf-actions {
     margin-top: 18px;
     display: flex;
@@ -319,6 +328,7 @@ h1 {
     transform: translateY(-1px);
 }
 
+/* Modal de cadastro/edição */
 .overlay {
     position: fixed;
     inset: 0;

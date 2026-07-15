@@ -1,209 +1,225 @@
+// Configuração básica do calendário
 const YEAR = 2026, MONTH = 6;
-        const STORAGE_KEY = 'boletins-julho-2026';
-        const DRAFTS_STORAGE_KEY = 'boletins-julho-2026-drafts';
-        const grid = document.getElementById('grid');
-        const overlay = document.getElementById('overlay');
-        const counterEl = document.getElementById('counter');
-        const pdfBtn = document.getElementById('btnPdf');
-        let data = {};
-        let drafts = {};
-        let activeDay = null;
-        let activeEntryIndex = null;
+const STORAGE_KEY = 'boletins-julho-2026';
+const DRAFTS_STORAGE_KEY = 'boletins-julho-2026-drafts';
 
-        const todayStr = (() => {
-            const d = new Date();
-            return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-        })();
+// Elementos da interface
+const grid = document.getElementById('grid');
+const overlay = document.getElementById('overlay');
+const counterEl = document.getElementById('counter');
+const pdfBtn = document.getElementById('btnPdf');
 
-        function key(day) {
-            return YEAR + '-' + String(MONTH + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+// Estado da aplicação
+let data = {};
+let drafts = {};
+let activeDay = null;
+let activeEntryIndex = null;
+
+// Data atual para destacar o dia de hoje
+const todayStr = (() => {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+})();
+
+// Gera a chave única de um dia no calendário
+function key(day) {
+    return YEAR + '-' + String(MONTH + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+}
+
+// Gera a chave usada para identificar um rascunho de boletim
+function draftKey(day, entryIndex) {
+    const indexKey = entryIndex === null || entryIndex === undefined ? 'new' : entryIndex;
+    return key(day) + '::' + indexKey;
+}
+
+// Escapa conteúdo para evitar renderização insegura em HTML
+function esc(s) {
+    const d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+}
+
+// Retorna os boletins de um dia, sempre como array
+function getEntriesForDay(k) {
+    const value = data[k];
+    if (Array.isArray(value)) return value;
+    if (value && typeof value === 'object') return [value];
+    return [];
+}
+
+// Renderiza o calendário completo com os boletins salvos
+function render() {
+    grid.innerHTML = '';
+    const first = new Date(YEAR, MONTH, 1);
+    const startPad = first.getDay();
+    const daysInMonth = new Date(YEAR, MONTH + 1, 0).getDate();
+    const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
+
+    let count = 0;
+    for (let i = 0; i < totalCells; i++) {
+        const dayNum = i - startPad + 1;
+        const cell = document.createElement('div');
+        if (dayNum < 1 || dayNum > daysInMonth) {
+            cell.className = 'cell pad';
+            grid.appendChild(cell);
+            continue;
         }
+        const k = key(dayNum);
+        const isToday = k === todayStr;
+        cell.className = 'cell' + (isToday ? ' today' : '');
+        cell.onclick = () => openModal(dayNum, null);
 
-        function draftKey(day, entryIndex) {
-            const indexKey = entryIndex === null || entryIndex === undefined ? 'new' : entryIndex;
-            return key(day) + '::' + indexKey;
-        }
+        const num = document.createElement('div');
+        num.className = 'daynum';
+        num.innerHTML = dayNum + (isToday ? '<span class="today-dot"></span>' : '');
+        cell.appendChild(num);
 
-        function esc(s) {
-            const d = document.createElement('div');
-            d.textContent = s || '';
-            return d.innerHTML;
-        }
-
-        function getEntriesForDay(k) {
-            const value = data[k];
-            if (Array.isArray(value)) return value;
-            if (value && typeof value === 'object') return [value];
-            return [];
-        }
-
-        function render() {
-            grid.innerHTML = '';
-            const first = new Date(YEAR, MONTH, 1);
-            const startPad = first.getDay();
-            const daysInMonth = new Date(YEAR, MONTH + 1, 0).getDate();
-            const totalCells = Math.ceil((startPad + daysInMonth) / 7) * 7;
-
-            let count = 0;
-            for (let i = 0; i < totalCells; i++) {
-                const dayNum = i - startPad + 1;
-                const cell = document.createElement('div');
-                if (dayNum < 1 || dayNum > daysInMonth) {
-                    cell.className = 'cell pad';
-                    grid.appendChild(cell);
-                    continue;
-                }
-                const k = key(dayNum);
-                const isToday = k === todayStr;
-                cell.className = 'cell' + (isToday ? ' today' : '');
-                cell.onclick = () => openModal(dayNum, null);
-
-                const num = document.createElement('div');
-                num.className = 'daynum';
-                num.innerHTML = dayNum + (isToday ? '<span class="today-dot"></span>' : '');
-                cell.appendChild(num);
-
-                const entries = getEntriesForDay(k);
-                if (entries.length) {
-                    count += entries.length;
-                    cell.classList.add('has-entries');
-                    if (entries.length > 1) cell.classList.add('has-many');
-                    const stack = document.createElement('div');
-                    stack.className = 'entry-stack';
-                    const countBadge = document.createElement('div');
-                    countBadge.className = 'entry-count';
-                    countBadge.textContent = entries.length + (entries.length === 1 ? ' boletim' : ' boletins');
-                    stack.appendChild(countBadge);
-                    entries.forEach((entry, index) => {
-                        const e = document.createElement('div');
-                        e.className = 'entry';
-                        e.onclick = (event) => {
-                            event.stopPropagation();
-                            openModal(dayNum, index);
-                        };
-
-                        const head = document.createElement('div');
-                        head.className = 'entry-head';
-                        head.innerHTML = '<span class="entry-index">' + (index + 1) + '</span><span class="entry-tag">Boletim</span>';
-
-                        const removeBtn = document.createElement('button');
-                        removeBtn.className = 'entry-remove';
-                        removeBtn.type = 'button';
-                        removeBtn.textContent = '×';
-                        removeBtn.title = 'Remover este boletim';
-                        removeBtn.onclick = (event) => {
-                            event.stopPropagation();
-                            removeEntry(dayNum, index);
-                        };
-
-                        head.appendChild(removeBtn);
-
-                        const title = document.createElement('p');
-                        title.className = 't';
-                        title.textContent = entry.title;
-
-                        const desc = document.createElement('p');
-                        desc.className = 'd';
-                        desc.textContent = entry.desc || '';
-
-                        e.appendChild(head);
-                        e.appendChild(title);
-                        if (entry.desc) e.appendChild(desc);
-                        if (entry.art) {
-                            const img = document.createElement('img');
-                            img.src = entry.art;
-                            img.onerror = () => { img.style.display = 'none'; };
-                            e.appendChild(img);
-                        }
-                        stack.appendChild(e);
-                    });
-                    cell.appendChild(stack);
-                } else {
-                    const add = document.createElement('div');
-                    add.className = 'add';
-                    add.textContent = '+';
-                    cell.appendChild(add);
-                }
-                grid.appendChild(cell);
-            }
-            const counterLabel = count === 1 ? 'boletim programado' : 'boletins programados';
-            counterEl.innerHTML = '<b>' + count + '</b>' + counterLabel;
-        }
-
-        function openModal(day, entryIndex = null) {
-            activeDay = day;
-            activeEntryIndex = entryIndex;
-            const k = key(day);
-            const entries = getEntriesForDay(k);
-            const draft = drafts[draftKey(day, entryIndex)];
-            const entry = draft || ((entryIndex !== null && entries[entryIndex]) ? entries[entryIndex] : { title: '', desc: '', art: '' });
-            document.getElementById('mdate').textContent = day + ' de julho de 2026';
-            document.getElementById('fTitle').value = entry.title;
-            document.getElementById('fDesc').value = entry.desc;
-            document.getElementById('fArt').value = entry.art;
-            const prev = document.getElementById('fArtPreview');
-            if (entry.art) { prev.src = entry.art; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
-            document.getElementById('btnDel').style.visibility = (entryIndex !== null && entries[entryIndex]) ? 'visible' : 'hidden';
-            overlay.classList.add('open');
-        }
-
-        function closeModal() {
-            if (activeDay !== null) {
-                const draftEntry = {
-                    title: document.getElementById('fTitle').value.trim(),
-                    desc: document.getElementById('fDesc').value.trim(),
-                    art: document.getElementById('fArt').value.trim()
+        const entries = getEntriesForDay(k);
+        if (entries.length) {
+            count += entries.length;
+            cell.classList.add('has-entries');
+            if (entries.length > 1) cell.classList.add('has-many');
+            const stack = document.createElement('div');
+            stack.className = 'entry-stack';
+            const countBadge = document.createElement('div');
+            countBadge.className = 'entry-count';
+            countBadge.textContent = entries.length + (entries.length === 1 ? ' boletim' : ' boletins');
+            stack.appendChild(countBadge);
+            entries.forEach((entry, index) => {
+                const e = document.createElement('div');
+                e.className = 'entry';
+                e.onclick = (event) => {
+                    event.stopPropagation();
+                    openModal(dayNum, index);
                 };
-                if (draftEntry.title || draftEntry.desc || draftEntry.art) {
-                    drafts[draftKey(activeDay, activeEntryIndex)] = draftEntry;
-                } else {
-                    delete drafts[draftKey(activeDay, activeEntryIndex)];
+
+                const head = document.createElement('div');
+                head.className = 'entry-head';
+                head.innerHTML = '<span class="entry-index">' + (index + 1) + '</span><span class="entry-tag">Boletim</span>';
+
+                const removeBtn = document.createElement('button');
+                removeBtn.className = 'entry-remove';
+                removeBtn.type = 'button';
+                removeBtn.textContent = '×';
+                removeBtn.title = 'Remover este boletim';
+                removeBtn.onclick = (event) => {
+                    event.stopPropagation();
+                    removeEntry(dayNum, index);
+                };
+
+                head.appendChild(removeBtn);
+
+                const title = document.createElement('p');
+                title.className = 't';
+                title.textContent = entry.title;
+
+                const desc = document.createElement('p');
+                desc.className = 'd';
+                desc.textContent = entry.desc || '';
+
+                e.appendChild(head);
+                e.appendChild(title);
+                if (entry.desc) e.appendChild(desc);
+                if (entry.art) {
+                    const img = document.createElement('img');
+                    img.src = entry.art;
+                    img.onerror = () => { img.style.display = 'none'; };
+                    e.appendChild(img);
                 }
-                persist();
-            }
-            overlay.classList.remove('open');
-            activeDay = null;
-            activeEntryIndex = null;
+                stack.appendChild(e);
+            });
+            cell.appendChild(stack);
+        } else {
+            const add = document.createElement('div');
+            add.className = 'add';
+            add.textContent = '+';
+            cell.appendChild(add);
+        }
+        grid.appendChild(cell);
+    }
+    const counterLabel = count === 1 ? 'boletim programado' : 'boletins programados';
+    counterEl.innerHTML = '<b>' + count + '</b>' + counterLabel;
+}
+
+// Abre o modal para criar ou editar um boletim
+function openModal(day, entryIndex = null) {
+    activeDay = day;
+    activeEntryIndex = entryIndex;
+    const k = key(day);
+    const entries = getEntriesForDay(k);
+    const draft = drafts[draftKey(day, entryIndex)];
+    const entry = draft || ((entryIndex !== null && entries[entryIndex]) ? entries[entryIndex] : { title: '', desc: '', art: '' });
+    document.getElementById('mdate').textContent = day + ' de julho de 2026';
+    document.getElementById('fTitle').value = entry.title;
+    document.getElementById('fDesc').value = entry.desc;
+    document.getElementById('fArt').value = entry.art;
+    const prev = document.getElementById('fArtPreview');
+    if (entry.art) { prev.src = entry.art; prev.style.display = 'block'; } else { prev.style.display = 'none'; }
+    document.getElementById('btnDel').style.visibility = (entryIndex !== null && entries[entryIndex]) ? 'visible' : 'hidden';
+    overlay.classList.add('open');
+}
+
+// Fecha o modal e salva o conteúdo atual como rascunho
+function closeModal() {
+    if (activeDay !== null) {
+        const draftEntry = {
+            title: document.getElementById('fTitle').value.trim(),
+            desc: document.getElementById('fDesc').value.trim(),
+            art: document.getElementById('fArt').value.trim()
+        };
+        if (draftEntry.title || draftEntry.desc || draftEntry.art) {
+            drafts[draftKey(activeDay, activeEntryIndex)] = draftEntry;
+        } else {
+            delete drafts[draftKey(activeDay, activeEntryIndex)];
+        }
+        persist();
+    }
+    overlay.classList.remove('open');
+    activeDay = null;
+    activeEntryIndex = null;
+}
+
+// Salva automaticamente o que foi digitado no formulário
+function saveDraftFromForm() {
+    if (activeDay === null) return;
+    const draftEntry = {
+        title: document.getElementById('fTitle').value.trim(),
+        desc: document.getElementById('fDesc').value.trim(),
+        art: document.getElementById('fArt').value.trim()
+    };
+    if (draftEntry.title || draftEntry.desc || draftEntry.art) {
+        drafts[draftKey(activeDay, activeEntryIndex)] = draftEntry;
+    } else {
+        delete drafts[draftKey(activeDay, activeEntryIndex)];
+    }
+    persist();
+}
+
+document.getElementById('fTitle').addEventListener('input', saveDraftFromForm);
+document.getElementById('fDesc').addEventListener('input', saveDraftFromForm);
+document.getElementById('fArt').addEventListener('input', (e) => {
+    const prev = document.getElementById('fArtPreview');
+    if (e.target.value) { prev.src = e.target.value; prev.style.display = 'block'; }
+    else { prev.style.display = 'none'; }
+    saveDraftFromForm();
+});
+
+document.getElementById('btnCancel').onclick = closeModal;
+overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+// Gera uma versão para impressão/PDF do calendário atual
+if (pdfBtn) {
+    pdfBtn.onclick = async () => {
+        const title = 'Calendário editorial - Julho 2026';
+        const printWindow = window.open('', '_blank', 'width=1200,height=900');
+        if (!printWindow) {
+            alert('Permita pop-ups para gerar o PDF.');
+            return;
         }
 
-        function saveDraftFromForm() {
-            if (activeDay === null) return;
-            const draftEntry = {
-                title: document.getElementById('fTitle').value.trim(),
-                desc: document.getElementById('fDesc').value.trim(),
-                art: document.getElementById('fArt').value.trim()
-            };
-            if (draftEntry.title || draftEntry.desc || draftEntry.art) {
-                drafts[draftKey(activeDay, activeEntryIndex)] = draftEntry;
-            } else {
-                delete drafts[draftKey(activeDay, activeEntryIndex)];
-            }
-            persist();
-        }
-
-        document.getElementById('fTitle').addEventListener('input', saveDraftFromForm);
-        document.getElementById('fDesc').addEventListener('input', saveDraftFromForm);
-        document.getElementById('fArt').addEventListener('input', (e) => {
-            const prev = document.getElementById('fArtPreview');
-            if (e.target.value) { prev.src = e.target.value; prev.style.display = 'block'; }
-            else { prev.style.display = 'none'; }
-            saveDraftFromForm();
-        });
-
-        document.getElementById('btnCancel').onclick = closeModal;
-        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
-
-        if (pdfBtn) {
-            pdfBtn.onclick = async () => {
-                const title = 'Calendário editorial - Julho 2026';
-                const printWindow = window.open('', '_blank', 'width=1200,height=900');
-                if (!printWindow) {
-                    alert('Permita pop-ups para gerar o PDF.');
-                    return;
-                }
-
-                const calendarMarkup = document.querySelector('.wrap').outerHTML;
-                printWindow.document.write(`<!DOCTYPE html>
+        const calendarMarkup = document.querySelector('.wrap').outerHTML;
+        //Carregando HTML incorporado com estilo e conteúdo do calendário
+        printWindow.document.write(`<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
@@ -241,97 +257,102 @@ const YEAR = 2026, MONTH = 6;
 ${calendarMarkup}
 </body>
 </html>`);
-                printWindow.document.close();
-                printWindow.focus();
-                setTimeout(() => {
-                    printWindow.print();
-                }, 500);
-            };
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+            printWindow.print();
+        }, 500);
+    };
+}
+
+// Salva o boletim no estado e no storage
+document.getElementById('btnSave').onclick = async () => {
+    const title = document.getElementById('fTitle').value.trim();
+    if (!title) { document.getElementById('fTitle').focus(); return; }
+    const k = key(activeDay);
+    const newEntry = {
+        title,
+        desc: document.getElementById('fDesc').value.trim(),
+        art: document.getElementById('fArt').value.trim()
+    };
+    const existingEntries = getEntriesForDay(k);
+    if (activeEntryIndex !== null && existingEntries[activeEntryIndex]) {
+        existingEntries[activeEntryIndex] = newEntry;
+        data[k] = existingEntries;
+    } else {
+        data[k] = [...existingEntries, newEntry];
+    }
+    if (!data[k].length) delete data[k];
+    delete drafts[draftKey(activeDay, activeEntryIndex)];
+    await persist();
+    render();
+    closeModal();
+};
+
+// Remove um boletim específico de um dia
+async function removeEntry(day, index) {
+    const k = key(day);
+    const entries = getEntriesForDay(k);
+    if (index < 0 || index >= entries.length) return;
+    entries.splice(index, 1);
+    if (entries.length) data[k] = entries;
+    else delete data[k];
+    delete drafts[draftKey(day, index)];
+    await persist();
+    render();
+    closeModal();
+}
+
+// Botão de remoção do boletim aberto no modal
+document.getElementById('btnDel').onclick = async () => {
+    if (activeDay === null || activeEntryIndex === null) return;
+    await removeEntry(activeDay, activeEntryIndex);
+};
+
+// Persiste os boletins e os rascunhos no armazenamento do navegador
+async function persist() {
+    try {
+        if (window.storage && typeof window.storage.set === 'function') {
+            await window.storage.set(STORAGE_KEY, JSON.stringify(data));
+            await window.storage.set(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
+            return;
         }
+    } catch (err) {
+        console.error('Falha ao salvar no storage', err);
+    }
+    try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
+    } catch (err) {
+        console.error('Falha ao salvar no localStorage', err);
+    }
+}
 
-        document.getElementById('btnSave').onclick = async () => {
-            const title = document.getElementById('fTitle').value.trim();
-            if (!title) { document.getElementById('fTitle').focus(); return; }
-            const k = key(activeDay);
-            const newEntry = {
-                title,
-                desc: document.getElementById('fDesc').value.trim(),
-                art: document.getElementById('fArt').value.trim()
-            };
-            const existingEntries = getEntriesForDay(k);
-            if (activeEntryIndex !== null && existingEntries[activeEntryIndex]) {
-                existingEntries[activeEntryIndex] = newEntry;
-                data[k] = existingEntries;
-            } else {
-                data[k] = [...existingEntries, newEntry];
-            }
-            if (!data[k].length) delete data[k];
-            delete drafts[draftKey(activeDay, activeEntryIndex)];
-            await persist();
-            render();
-            closeModal();
-        };
-
-        async function removeEntry(day, index) {
-            const k = key(day);
-            const entries = getEntriesForDay(k);
-            if (index < 0 || index >= entries.length) return;
-            entries.splice(index, 1);
-            if (entries.length) data[k] = entries;
-            else delete data[k];
-            delete drafts[draftKey(day, index)];
-            await persist();
-            render();
-            closeModal();
+// Carrega os dados salvos ao iniciar a página
+async function load() {
+    try {
+        if (window.storage && typeof window.storage.get === 'function') {
+            const res = await window.storage.get(STORAGE_KEY);
+            data = res ? JSON.parse(res.value) : {};
+            const draftRes = await window.storage.get(DRAFTS_STORAGE_KEY);
+            drafts = draftRes ? JSON.parse(draftRes.value) : {};
+        } else {
+            const storedData = localStorage.getItem(STORAGE_KEY);
+            data = storedData ? JSON.parse(storedData) : {};
+            const storedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
+            drafts = storedDrafts ? JSON.parse(storedDrafts) : {};
         }
-
-        document.getElementById('btnDel').onclick = async () => {
-            if (activeDay === null || activeEntryIndex === null) return;
-            await removeEntry(activeDay, activeEntryIndex);
-        };
-
-        async function persist() {
-            try {
-                if (window.storage && typeof window.storage.set === 'function') {
-                    await window.storage.set(STORAGE_KEY, JSON.stringify(data));
-                    await window.storage.set(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
-                    return;
-                }
-            } catch (err) {
-                console.error('Falha ao salvar no storage', err);
-            }
-            try {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-                localStorage.setItem(DRAFTS_STORAGE_KEY, JSON.stringify(drafts));
-            } catch (err) {
-                console.error('Falha ao salvar no localStorage', err);
-            }
+    } catch (err) {
+        data = {};
+        drafts = {};
+    }
+    Object.keys(data).forEach((keyName) => {
+        if (data[keyName] && !Array.isArray(data[keyName]) && typeof data[keyName] === 'object') {
+            data[keyName] = [data[keyName]];
         }
+    });
+    await persist();
+    render();
+}
 
-        async function load() {
-            try {
-                if (window.storage && typeof window.storage.get === 'function') {
-                    const res = await window.storage.get(STORAGE_KEY);
-                    data = res ? JSON.parse(res.value) : {};
-                    const draftRes = await window.storage.get(DRAFTS_STORAGE_KEY);
-                    drafts = draftRes ? JSON.parse(draftRes.value) : {};
-                } else {
-                    const storedData = localStorage.getItem(STORAGE_KEY);
-                    data = storedData ? JSON.parse(storedData) : {};
-                    const storedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
-                    drafts = storedDrafts ? JSON.parse(storedDrafts) : {};
-                }
-            } catch (err) {
-                data = {};
-                drafts = {};
-            }
-            Object.keys(data).forEach((keyName) => {
-                if (data[keyName] && !Array.isArray(data[keyName]) && typeof data[keyName] === 'object') {
-                    data[keyName] = [data[keyName]];
-                }
-            });
-            await persist();
-            render();
-        }
-
-        load();
+load();

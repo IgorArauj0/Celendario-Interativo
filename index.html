@@ -14,8 +14,10 @@
 </head>
 
 <body>
+    <!-- Container principal do calendário -->
     <div class="wrap">
 
+        <!-- Cabeçalho com título, marca e contador -->
         <div class="masthead">
             <div>
                 <p class="eyebrow">Calendário editorial</p>
@@ -35,12 +37,15 @@
             <div class="counter" id="counter"><b>6</b>boletins programados</div>
         </div>
 
+        <!-- Texto explicativo da funcionalidade -->
         <p class="subline">Clique em qualquer dia para programar o envio de um boletim aos Associados, Corretores e Funcionários,
             descrição e, se quiser, a arte de divulgação.</p>
 
+        <!-- Cabeçalhos dos dias da semana -->
         <div class="weekdays">
             <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
         </div>
+        <!-- Grade do calendário, preenchida dinamicamente pelo JavaScript -->
         <div class="grid" id="grid">
             <div class="cell pad"></div>
             <div class="cell pad"></div>
@@ -199,12 +204,14 @@
             </div>
             <div class="cell pad"></div>
         </div>
+        <!-- Rodapé informativo e ação de exportação -->
         <p class="empty-hint">Os boletins ficam salvos automaticamente na sua conta.</p>
         <div class="pdf-actions">
             <button class="pdf-btn" id="btnPdf">Gerar PDF do calendário</button>
         </div>
     </div>
 
+    <!-- Modal usado para criar, editar ou remover boletins -->
     <div class="overlay" id="overlay">
         <div class="modal">
             <h3>Programar boletim</h3>
