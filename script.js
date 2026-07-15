@@ -8,6 +8,7 @@ const grid = document.getElementById('grid');
 const overlay = document.getElementById('overlay');
 const counterEl = document.getElementById('counter');
 const pdfBtn = document.getElementById('btnPdf');
+const saveCalendarBtn = document.getElementById('btnSaveCalendar');
 
 // Estado da aplicação
 let data = {};
@@ -206,6 +207,17 @@ document.getElementById('fArt').addEventListener('input', (e) => {
 
 document.getElementById('btnCancel').onclick = closeModal;
 overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+// Salva explicitamente o estado atual do calendário
+if (saveCalendarBtn) {
+    saveCalendarBtn.onclick = async () => {
+        await persist();
+        saveCalendarBtn.textContent = 'Calendário salvo';
+        setTimeout(() => {
+            saveCalendarBtn.textContent = 'Salvar calendário atual';
+        }, 1500);
+    };
+}
 
 // Gera uma versão para impressão/PDF do calendário atual
 if (pdfBtn) {
