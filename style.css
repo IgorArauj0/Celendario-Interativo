@@ -94,9 +94,49 @@ h1 {
 .subline {
     color: var(--ink-soft);
     font-size: 14.5px;
-    margin: 14px 0 28px;
+    margin: 14px 0 12px;
     max-width: 640px;
     line-height: 1.55;
+}
+
+.month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 0 16px;
+    padding: 10px 14px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .7);
+    max-width: 280px;
+}
+
+.month-label {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--ink);
+    text-align: center;
+    flex: 1;
+}
+
+.month-nav-btn {
+    border: 0;
+    background: var(--gold-tint);
+    color: var(--gold-deep);
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: transform .15s ease, background .15s ease;
+}
+
+.month-nav-btn:hover {
+    transform: translateY(-1px);
+    background: var(--gold);
+    color: white;
 }
 
 /* Cabeçalhos dos dias da semana */
