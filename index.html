@@ -3,7 +3,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
     <link
@@ -216,6 +218,27 @@
         <div class="pdf-actions">
             <button class="pdf-btn save-btn" id="btnSaveCalendar">Salvar calendário atual</button>
             <button class="pdf-btn" id="btnPdf">Gerar PDF do calendário</button>
+            <button class="pdf-btn" id="btnShareLink">Gerar link compartilhável</button>
+        </div>
+    </div>
+
+    <!-- Modal de compartilhamento -->
+    <div class="overlay" id="shareOverlay">
+        <div class="modal" style="max-width: 500px;">
+            <h3>Link Compartilhável</h3>
+            <p style="color: #3C4A5E; margin-bottom: 16px;">Compartilhe este link com outras pessoas para que vejam seu calendário preenchido:</p>
+            <div class="field">
+                <textarea id="shareUrl" readonly style="height: 80px; font-size: 12px; word-break: break-all;"></textarea>
+            </div>
+            <div style="background: #F0F0F0; padding: 12px; border-radius: 6px; margin-bottom: 16px; font-size: 12px; color: #666;">
+                <strong>Dica:</strong> O link contém todos os dados do seu calendário. Qualquer pessoa que abrir este link verá seu calendário preenchido.
+            </div>
+            <div class="mbtns">
+                <div class="right">
+                    <button id="btnCopyShare">Copiar link</button>
+                    <button class="primary" id="btnCloseShare">Fechar</button>
+                </div>
+            </div>
         </div>
     </div>
 

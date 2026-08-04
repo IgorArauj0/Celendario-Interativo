@@ -489,10 +489,11 @@ function normalizeStorageShape(source) {
 
 // Carrega os dados salvos ao iniciar a página
 async function load() {
+    let hasExistingState = false;
+
     try {
         let rawData = {};
         let rawDrafts = {};
-        let hasExistingState = false;
 
         if (window.storage && typeof window.storage.get === 'function') {
             const res = await window.storage.get(STORAGE_KEY);
@@ -557,8 +558,82 @@ async function load() {
         }
     }
 
+    // Verifica se há dados compartilhados na URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const sharedData = urlParams.get('shared');
+    if (sharedData && !hasExistingState) {
+        try {
+            const decodedData = JSON.parse(atob(sharedData));
+            if (decodedData && typeof decodedData === 'object') {
+                data = normalizeStorageShape(decodedData);
+                drafts = {};
+            }
+        } catch (err) {
+            console.warn('Não foi possível decodificar os dados compartilhados', err);
+        }
+    }
+
     await persist();
     render();
+}
+
+// Funções de compartilhamento de link
+function generateShareLink() {
+    try {
+        const encodedData = btoa(JSON.stringify(data));
+        const baseUrl = window.location.origin + window.location.pathname;
+        const shareUrl = `${baseUrl}?shared=${encodedData}`;
+        return shareUrl;
+    } catch (err) {
+        console.error('Erro ao gerar link compartilhável', err);
+        return null;
+    }
+}
+
+function openShareModal() {
+    const shareUrl = generateShareLink();
+    if (!shareUrl) {
+        alert('Erro ao gerar o link. Tente novamente.');
+        return;
+    }
+    document.getElementById('shareUrl').value = shareUrl;
+    document.getElementById('shareOverlay').classList.add('open');
+}
+
+function closeShareModal() {
+    document.getElementById('shareOverlay').classList.remove('open');
+}
+
+// Event listeners para os botões de compartilhamento
+const shareBtn = document.getElementById('btnShareLink');
+const copyShareBtn = document.getElementById('btnCopyShare');
+const closeShareBtn = document.getElementById('btnCloseShare');
+const shareOverlay = document.getElementById('shareOverlay');
+
+if (shareBtn) {
+    shareBtn.onclick = openShareModal;
+}
+
+if (copyShareBtn) {
+    copyShareBtn.onclick = () => {
+        const shareUrlElement = document.getElementById('shareUrl');
+        shareUrlElement.select();
+        document.execCommand('copy');
+        copyShareBtn.textContent = 'Link copiado!';
+        setTimeout(() => {
+            copyShareBtn.textContent = 'Copiar link';
+        }, 2000);
+    };
+}
+
+if (closeShareBtn) {
+    closeShareBtn.onclick = closeShareModal;
+}
+
+if (shareOverlay) {
+    shareOverlay.addEventListener('click', (e) => {
+        if (e.target === shareOverlay) closeShareModal();
+    });
 }
 
 load();
