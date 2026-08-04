@@ -5,6 +5,39 @@ const STORAGE_KEY = 'boletins-calendar-data';
 const DRAFTS_STORAGE_KEY = 'boletins-calendar-drafts';
 const LEGACY_STORAGE_KEY = 'boletins-julho-2026';
 const LEGACY_DRAFTS_STORAGE_KEY = 'boletins-julho-2026-drafts';
+const DEFAULT_SEED_DATA = {
+    '2026-07': {
+        '2026-07-06': [{
+            title: 'Sesc|Férias de Julho',
+            desc: 'condição especial para os associados aproveitarem os hotéis por todo o Estado com todo o conforto',
+            art: 'https://sincorrj.tcsdigital.com.br/digital/public/BTPub_91_253F.gif'
+        }],
+        '2026-07-07': [{
+            title: '24º Congresso Brasileiro dos Corretores de Seguros',
+            desc: 'O Rio de Janeiro está pronto para ser o epicentro do mercado de seguros',
+            art: 'https://sincorrj.tcsdigital.com.br/digital/public/BTPub_90_0D13.gif'
+        }],
+        '2026-07-08': [{
+            title: 'Prof° Sergio Ricardo | Gestão financeira',
+            desc: 'Gestão financeira também é estratégia de crescimento.',
+            art: 'https://sincorrj.tcsdigital.com.br/digital/public/BTPub_93_80AE.gif'
+        }],
+        '2026-07-09': [{
+            title: 'Palestra Prof° Arley',
+            desc: 'Um bom plano de negócios faz toda a diferença no crescimento da sua corretora!',
+            art: 'https://sincorrj.tcsdigital.com.br/digital/public/BTPub_92_F0C0.gif'
+        }],
+        '2026-07-10': [{
+            title: 'Impacto da Lei 15.040/2024 - SENRA',
+            desc: 'Impacto da Lei 15.040/2024 na atividade de Corretores de Seguros - SENRA',
+            art: 'https://sincorrj.tcsdigital.com.br/digital/public/BTPub_97_A661.gif'
+        }],
+        '2026-07-15': [{
+            title: 'Palestra do Professor Arley',
+            desc: 'Boletim de convite e reforço de presença para os corretores associados.'
+        }]
+    }
+};
 
 // Elementos da interface
 const grid = document.getElementById('grid');
@@ -457,23 +490,33 @@ function normalizeStorageShape(source) {
 // Carrega os dados salvos ao iniciar a página
 async function load() {
     try {
+        let rawData = {};
+        let rawDrafts = {};
+        let hasExistingState = false;
+
         if (window.storage && typeof window.storage.get === 'function') {
             const res = await window.storage.get(STORAGE_KEY);
-            const rawData = res ? JSON.parse(res.value) : {};
             const draftRes = await window.storage.get(DRAFTS_STORAGE_KEY);
-            const rawDrafts = draftRes ? JSON.parse(draftRes.value) : {};
+            rawData = res && res.value ? JSON.parse(res.value) : {};
+            rawDrafts = draftRes && draftRes.value ? JSON.parse(draftRes.value) : {};
+            hasExistingState = Boolean(res && res.value) || Boolean(draftRes && draftRes.value);
+        } else {
+            const storedData = localStorage.getItem(STORAGE_KEY);
+            const storedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
+            rawData = storedData ? JSON.parse(storedData) : {};
+            rawDrafts = storedDrafts ? JSON.parse(storedDrafts) : {};
+            hasExistingState = Boolean(storedData) || Boolean(storedDrafts);
+        }
+
+        if (hasExistingState) {
             data = normalizeStorageShape(rawData);
             drafts = normalizeStorageShape(rawDrafts);
         } else {
-            const storedData = localStorage.getItem(STORAGE_KEY);
-            const rawData = storedData ? JSON.parse(storedData) : {};
-            const storedDrafts = localStorage.getItem(DRAFTS_STORAGE_KEY);
-            const rawDrafts = storedDrafts ? JSON.parse(storedDrafts) : {};
-            data = normalizeStorageShape(rawData);
-            drafts = normalizeStorageShape(rawDrafts);
+            data = normalizeStorageShape(DEFAULT_SEED_DATA);
+            drafts = {};
         }
     } catch (err) {
-        data = {};
+        data = normalizeStorageShape(DEFAULT_SEED_DATA);
         drafts = {};
     }
 
