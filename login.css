@@ -1,0 +1,196 @@
+/* Variáveis de tema para manter consistência visual */
+:root {
+    /* Fundo principal claro */
+    --cream: #FAF8F4;
+
+    /* Azul-marinho principal do Sincor RJ */
+    --ink: #0D2B50;
+
+    /* Azul/cinza para textos secundários */
+    --ink-soft: #526174;
+
+    /* Dourado institucional */
+    --gold: #C99A4B;
+
+    /* Dourado mais escuro */
+    --gold-deep: #A8792F;
+
+    /* Dourado extremamente suave para fundos */
+    --gold-tint: #F5EBD9;
+
+    /* Bordas e divisórias */
+    --line: #DDD8CF;
+
+    /* Cards e elementos destacados */
+    --card: #FFFFFF;
+
+    /* Fundo de destaque suave */
+    --today-tint: #dce3f8;
+
+    /* Erros, alertas e campos obrigatórios */
+    --danger: #A83B32;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+/* Base da página */
+body {
+    margin: 0;
+    background: var(--ink);
+    color: var(--card);
+    font-family: 'Inter', sans-serif;
+    padding: 16px 12px 80px;
+}
+
+
+.hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    
+}
+
+.hero-info {
+    min-height: 100vh;
+
+    background: var(--ink);
+    color: white;
+
+    padding: 45px 55px;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    width: 160px;
+    max-width: 100%;
+}
+
+.hero-content {
+    margin-top: 70px;
+    max-width: 520px;
+}
+
+.eyebrow {
+    display: block;
+
+    color: var(--gold);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+
+    margin-bottom: 20px;
+}
+
+.hero-content h1 {
+    font-size: clamp(2.2rem, 4vw, 3.8rem);
+    line-height: 1.1;
+
+    margin-bottom: 30px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    line-height: 1.6;
+
+    color: #d6deea;
+}
+
+.hero-footer {
+    margin-top: auto;
+
+    font-size: 14px;
+    color: #b9c5d3;
+}
+
+
+.hero-action {
+    min-height: 100vh;
+
+    background: var(--cream);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 60px;
+}
+
+.action-content {
+    width: 100%;
+    max-width: 550px;
+}
+
+.action-content h2 {
+    font-size: clamp(2rem, 3vw, 3rem);
+    margin-bottom: 15px;
+    color: var(--ink);
+}
+
+.action-content p {
+    color: var(--ink-soft);
+    font-size: 17px;
+    line-height: 1.6;
+
+    margin-bottom: 35px;
+}
+
+.btn-primary {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+
+    padding: 18px 25px;
+
+    background: var(--ink);
+    color: white;
+
+    text-decoration: none;
+    font-weight: 600;
+
+    border-radius: 10px;
+
+    transition: 0.2s;
+}
+
+.btn-primary:hover {
+    background: var(--gold-deep);
+    transition: 0.2s;
+    transform: translateY(-2px);
+}
+
+
+
+
+
+@media (max-width: 768px) {
+
+    .hero {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-info {
+        min-height: auto;
+        padding: 35px 25px 50px;
+    }
+
+    .hero-content {
+        margin-top: 50px;
+    }
+
+    .hero-footer {
+        margin-top: 50px;
+    }
+
+    .hero-action {
+        min-height: auto;
+        padding: 60px 25px;
+    }
+
+}
